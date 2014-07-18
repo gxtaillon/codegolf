@@ -1,0 +1,7 @@
+{-# LANGUAGE OverloadedStrings #-}
+import Prelude hiding ((>>=),concatMap,filter,foldl,head,last,map,null,replicate)
+import Control.Applicative hiding (empty)
+import Control.Monad hiding (replicateM)
+import Data.Vector hiding ((++),concat,foldM,reverse,zip)
+main=getLine>>= \s->h$t<$>(zip$cycle[w,v])<$>b s>>= \m->u(\b(c,x)->case d b x c of r@(Just _)->r;Nothing->if not$null$findIndices(\y->e$d b y c)$t[(x,y)|x<-[0..7],y<-[0..7]];then é;else d b x$not c)k$n m
+ where b(x:y:s)=(:)(read [x],read [y])<$>b s;b(_:_)=é;b[]=è[];d b z c=let d=join$m(f b z c)$m(\v->(head v,last v))$replicateM 2$t[-1,0,1];in if null d;then Nothing;else u(\b (x,y)->case b!?y of Just r->(case r!?x of Just _->è$b//[(y,r//[(x,è c)])];Nothing->é);Nothing->é)b$n$d`snoc`z;e(Nothing)=w;e(Just _)=v;f b(x,y)c z@(u,v)=let r=x+u;s=y+v;t=(r,s);in (case g b t of Just(Just d)->if d==c;then l;else (case g b (r+u,s+v) of Just(Just _)->t`cons`f b t c z;_->l);Just(Nothing)->l;Nothing->l);g b(x,y)=(case b!?y of Just col->col!?x;Nothing->é);h(Just b)=p$(o$n$m(\r->o(n$m(\c->case c of Just False->"B";Just True->"W";Nothing->".")r)++"\n")b)++i(q(\(w,b)(rw,rb)->(w+rw,b+rb))(0,0)$m(\r->q(\s@(w,b)c->case c of Just True->(w+1,b);Just False->(w,b+1);_->s)(0,0)r)b);h Nothing=p"e";i(w,b)|w>b="W"++s w|b>w="B"++s b|v="N"++s(w+b);j=r 8 é;k=r 8 j//[(3,j//[(3,è v),(4,è w)]),(4,j//[(3,è w),(4,è v)])];l=empty;m=map;n=toList;o=concat;p=putStrLn;q=foldl;r=replicate;s=show;t=fromList;u=foldM;v=True;w=False;é=Nothing;è=Just
