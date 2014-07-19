@@ -22,3 +22,5 @@ edTest f = do
         tst = txt == dec
     putStrLn $ (show $ T.length txt) ++ "," ++ (show $ T.length enc) ++ "," ++ (show $ T.length dec)++","++(show tst)
     putStrLn $ if not tst then T.unpack txt ++ "\n---NEXT---\n" ++ T.unpack dec else ""
+
+main = getLine >>= edTest
