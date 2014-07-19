@@ -16,10 +16,14 @@ encRatio t = fromIntegral (T.length $ encode t) / fromIntegral (T.length t)
 
 -- Behavior is undefined for input characters greater than 0x7f
 encode :: T.Text -> T.Text
-encode t = T.pack $ map (toEnum) $ pck $ traceShowId rdyFactors
+encode t = T.pack $ map (toEnum) $ pck rdyFactors
     where rawFactors = map (primeFactors.fromEnum) $ T.unpack t
           idxFactors = map (map(\x->case elemIndex x factors of Just i -> i;_->1)) rawFactors
-          rdyFactors = concatMap (\x->[length x]++x) $ idxFactors
+          rdyFactors = concatMap (\x@(a:_)->do 
+                            let l = length x;
+                            if (take l (repeat a))==x 
+                                then [l`setBit`4,a] -- If the factors are all the same, store only one, set bit to tell how to decode.
+                                else [l]++x) $ idxFactors -- The 5th bit is still available to store information, but what?
 
 
 pck :: [Int] -> [Int]
@@ -41,13 +45,16 @@ ucks [] = []
 
 toIdxFactors :: [Int] -> [[Int]]
 toIdxFactors (a:r) = [fst tup] ++ toIdxFactors (snd tup)
-    where tup = splitAt a r
+    where len = a`clearBit`4
+          tup = if a`testBit`4 
+                    then (take len $ repeat $ head r, tail r)
+                    else splitAt len r
 toIdxFactors [] = []
 
 decode :: T.Text -> T.Text
 decode t = T.pack $ map (toEnum.product.map((!!)factors)) idxFactors
     where rdyFactors = uck $ map (fromEnum) $ T.unpack t
-          idxFactors = toIdxFactors $ traceShowId rdyFactors
+          idxFactors = toIdxFactors rdyFactors
 
 
 decodeFile f = do 
@@ -75,8 +82,9 @@ edTest f = do
     let txt = T.pack t
         enc = encode txt
         dec = decode enc
-    putStrLn $ (show $ T.length txt) ++ "," ++ (show $ T.length enc) ++ "," ++ (show $ T.length dec)
-    
+        tst = txt == dec
+    putStrLn $ (show $ T.length txt) ++ "," ++ (show $ T.length enc) ++ "," ++ (show $ T.length dec)++","++(show tst)
+    putStrLn $ if not tst then T.unpack txt ++ "\n---NEXT---\n" ++ T.unpack dec else ""    
 
 
 
