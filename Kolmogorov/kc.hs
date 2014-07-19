@@ -16,17 +16,17 @@ encRatio t = fromIntegral (T.length $ encode t) / fromIntegral (T.length t)
 
 -- Behavior is undefined for input characters greater than 0x7f
 encode :: T.Text -> T.Text
-encode t = T.pack $ map (toEnum) $ pck rdyFactors
+encode t = T.pack $ map (toEnum) $ pck $ traceShowId rdyFactors
     where rawFactors = map (primeFactors.fromEnum) $ T.unpack t
           idxFactors = map (map(\x->case elemIndex x factors of Just i -> i;_->1)) rawFactors
-          rdyFactors = concatMap (\x->[length x]++x) idxFactors
+          rdyFactors = concatMap (\x->[length x]++x) $ idxFactors
 
 
 pck :: [Int] -> [Int]
 pck (a:r) = pcks r a
 pck [] = []
 pcks :: [Int] -> Int -> [Int]
-pcks (a:r) c = if s < 0x10ffff then pcks r (s+a) else c : pcks r a -- max value of unicode char
+pcks (a:r) c = if s <= 0x10ffff then pcks r (s+a) else c : pcks r a -- max value of unicode char
     where s = shift c 5 -- 128 chars with a total of 32 factors that can be stored on *5* bits.
 pcks [] c = [c]
 
@@ -75,7 +75,6 @@ edTest f = do
     let txt = T.pack t
         enc = encode txt
         dec = decode enc
-    print t
     putStrLn $ (show $ T.length txt) ++ "," ++ (show $ T.length enc) ++ "," ++ (show $ T.length dec)
     
 
