@@ -21,10 +21,12 @@ encode t = T.pack $ map (toEnum) $ pck rdyFactors
           idxFactors = map (map(\x->case elemIndex x factors of Just i -> i;_->1)) rawFactors
           rdyFactors = concatMap (\x@(a:_)->do 
                             let l = length x;
-                            if (take l (repeat a))==x 
+                                w = take l $ repeat a
+                            if w==x 
                                 then [l`setBit`4,a] -- If the factors are all the same, store only one, set bit to tell how to decode.
-                                else [l]++x) $ idxFactors -- The 5th bit is still available to store information, but what?
-
+                                else if init w == init x
+                                    then [l`setBit`3,a,last x]
+                                    else [l]++x) $ idxFactors 
 
 pck :: [Int] -> [Int]
 pck (a:r) = pcks r a
@@ -45,10 +47,12 @@ ucks [] = []
 
 toIdxFactors :: [Int] -> [[Int]]
 toIdxFactors (a:r) = [fst tup] ++ toIdxFactors (snd tup)
-    where len = a`clearBit`4
+    where len = a`clearBit`4`clearBit`3
           tup = if a`testBit`4 
                     then (take len $ repeat $ head r, tail r)
-                    else splitAt len r
+                    else if a`testBit`3
+                        then ((take (len-1) $ repeat $ head r) ++ [r!!1], drop 2 r)
+                        else splitAt len r
 toIdxFactors [] = []
 
 decode :: T.Text -> T.Text
