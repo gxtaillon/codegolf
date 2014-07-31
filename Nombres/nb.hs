@@ -1,0 +1,2 @@
+y n = x n where r=n`mod`10;s=n`mod`20;t="quatre-vingt";w=" et ";(#)=(++);q=repeat;p l i=(l#q("-"#y i))!!r;o=(!!)$words"zéro un deux trois quatre cinq six sept huit neuf dix onze douze treize quatorze quinze seize vingt trente quarante cinquante soixante";x n|n<17=o n|n<20="dix-"#y(n-10)|n<70=o((n`div`10)+15)#p["",w#"un"]r|n<80=y 60#p["-dix",w#y 11]s|n<90=t#p["s"]r|n<100=t#"-"#y(r+10)|n>99="cent"
+main=interact$y.read
